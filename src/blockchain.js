@@ -72,7 +72,7 @@ class Blockchain {
 
             block.time = new Date().getTime().toString().slice(0,-3)
             block.height = self.height
-            block.hash = Block.calculatedHash(block)
+            block.hash = BlockClass.Block.calculatedHash(block)
 
             self.chain.push(block)
 
