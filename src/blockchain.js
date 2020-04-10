@@ -122,7 +122,9 @@ class Blockchain {
                     reject(new Error("Time elapsed is more than 5 minutes."));
                 }
 
-                if (!bitcoinMessage.verify(message, address, signature)) {
+                let verificationResult = bitcoinMessage.verify(message, address, signature);
+
+                if (!verificationResult) {
                     reject(new Error("Bitcoin Message verification failed."));
                 }
 
@@ -130,6 +132,7 @@ class Blockchain {
 
                 resolve(await self._addBlock(newBlock)); // TODO verify if I need await for adding the block for resolve
             } catch (e) {
+                console.log(e)
                 reject(e);
             }
         });
@@ -180,7 +183,17 @@ class Blockchain {
         let self = this;
         let stars = [];
         return new Promise((resolve, reject) => {
-            stars = self.chain.map(b => b.getBData()).filter(Boolean).filter(x => x.owner === address);
+            self.chain.forEach((block) => {
+                block.getBData()
+                    .then(
+                        bdata => {
+                            if (bdata.owner === address) {
+                                stars.push(bdata.star)
+                            }
+                        }
+                    )
+            });
+
             resolve(stars)
         });
     }
